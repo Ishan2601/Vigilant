@@ -8,7 +8,7 @@ from firebase import firebase
 class VideoCamera(object):
 
     def __init__(self):
-        self.eye_thresh = 0.4
+        self.eye_thresh = 0.3
         self.eye_consec_frames = 50
         self.mouth_thresh = 0.4
         self.mouth_consec_frames = 50
