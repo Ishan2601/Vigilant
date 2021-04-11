@@ -1,20 +1,28 @@
 from flask import Flask, render_template, Response, request
 from camera import VideoCamera
+from drowsiness import Drowsy
 import json
 import requests
+from utils import Util
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import credentials, auth, firestore
 cred = credentials.Certificate('./fbAdminConfig.json')
 
 # TO DO
-#1. Log all data to Firebase
-#2. Integrate Location, Twilio
-#3. Nearby API
-#4. Rpi Code
-#5. Homepage
+#1. Log all data to Firebase - done
+#2. Integrate Location, Twilio - done
+#3. Nearby API - done
+#4. Rpi Code - done
+#5. Homepage - done
+#6. Implement a button in camera.html to simulate end of ride - done
 
 
 user = {}
+u = Util()
+sleep_count = 0
+yawn_count = 0
+start_time = 0
+ride_id = '' 
 app = Flask(__name__)
 
 FIREBASE_WEB_API_KEY = "AIzaSyCEJKHbCFEfVE8XMV8Rd_tTLhHTEr1QpAI"
@@ -30,6 +38,7 @@ config = {
         "appId": "1:71056574999:web:c35fb0b1d641e3ec632a52"}
 
 firebase_admin.initialize_app(cred, config)
+db = firestore.client()
 
 @app.route('/')
 def index():
@@ -37,9 +46,16 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    global db
     if request.method == 'POST':
-        # GET USER DETAILS
-        print(request.form.get('fname'))
+        user_details = {}
+        user_details['Full Name'] = request.form.get('fname')
+        user_details['Car No.'] = str(request.form.get('car'))
+        user_details['DOB'] = str(request.form.get('dob'))
+        user_details['Contact No.'] = str(request.form.get('phno'))
+        user_details['Emergency Contact No.'] = str(request.form.get('sosno'))
+        doc = db.collection(u'Drivers').document(f'{user.uid}')
+        doc.set(user_details)
         print(user.uid)
     return render_template('login.html', task=1)
 
@@ -55,21 +71,67 @@ def signup():
 
 @app.route('/logged_in', methods=['POST'])
 def logged_in():
-        if request.method == "POST":
-            email = request.form.get('email')
-            pwd = request.form.get('password')
-            payload = json.dumps({
-                "email": email,
-                "password": pwd,
-                "returnSecureToken": True
-            })
-            r = requests.post(rest_api_url,params={"key": FIREBASE_WEB_API_KEY},data=payload)
-            #print(r.json())
-            return render_template('camera.html')
+    global start_time
+    if request.method == "POST":
+        email = request.form.get('email')
+        pwd = request.form.get('password')
+        payload = json.dumps({
+            "email": email,
+            "password": pwd,
+            "returnSecureToken": True
+        })
+        r = requests.post(rest_api_url,params={"key": FIREBASE_WEB_API_KEY},data=payload)
+        start_time = u.get_time()
+        #print(r.json())
+        return render_template('camera.html')
+
+@app.route('/end', methods=['GET', 'POST'])
+def ride_end():
+    global db
+    if request.method == 'POST':
+        global user
+        global sleep_count
+        global yawn_count
+        global ride_id
+        ltlng = u.get_lat_long()
+        data = {}
+        data['Ride Start Time'] = start_time
+        data['End Start Time'] = u.get_time()
+        data['Latitude'] = ltlng[0]
+        data['Longitude'] = ltlng[1]
+        data['No. of sleeps'] = sleep_count
+        data['No. of yawns'] = yawn_count
+        data['isDay'] = u.get_daytime()
+        doc = db.collection(u'Drivers').document(f'{user.uid}').collection('Rides').document()
+        doc.set(data)
+        ride_id = doc.id
+        return render_template('ride.html')
+
+@app.route('/result', methods=['GET', 'POST'])
+def show_result():
+    global db
+    if request.method == 'POST':
+        global user
+        global ride_id
+        doc = db.collection(u'Drivers').document(f'{user.uid}')
+        details = doc.get().to_dict()
+        ride_doc = db.collection(u'Drivers').document(f'{user.uid}').collection(u'Rides').document(f'{ride_id}')
+        ride_details = ride_doc.get().to_dict()
+        sms = u.send_SMS(details['Emergency Contact No.'])
+        return render_template('result.html', result = details, got_result=True, sms_status = sms, ride_result = ride_details)
 
 def gen(camera):
+    global sleep_count
+    global yawn_count
+    d = Drowsy()
     while True:
         frame = camera.get_frame()
+        image = camera.save_frame()
+        slept, yawned = d.check_drowsy(image)
+        if slept:
+            sleep_count += 1
+        if yawned:
+            yawn_count += 1
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
@@ -81,4 +143,4 @@ def video_feed():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', debug=False)
+    app.run(host='127.0.0.1', debug=True)
