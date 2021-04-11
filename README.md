@@ -21,13 +21,17 @@
 
 <h5> Tech Stack </h5>
 <ul>
-	<ul>Hardware</ul>
+	<li>Hardware</li>
+	<ul>
 		<li>Raspberry Pi Zero W</li>
 		<li>OV5647 IR Camera Module</li>
 		<li>Buzzer, LED</li>
-	<ul>Software</ul>
+	</ul>
+	<li>Software</li>
+	<ul>
 		<li>Python</li>
 		<li>OpenCV</li>
+	</ul>
 </ul>
 
 <h5>Team Members</h5>

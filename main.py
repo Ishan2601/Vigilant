@@ -6,16 +6,7 @@ import requests
 from utils import Util
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
-cred = credentials.Certificate('./fbAdminConfig.json')
-
-# TO DO
-#1. Log all data to Firebase - done
-#2. Integrate Location, Twilio - done
-#3. Nearby API - done
-#4. Rpi Code - done
-#5. Homepage - done
-#6. Implement a button in camera.html to simulate end of ride - done
-
+cred = credentials.Certificate('PATH_TO_YOUR_CERTIFICATE')
 
 user = {}
 u = Util()
@@ -25,17 +16,17 @@ start_time = 0
 ride_id = '' 
 app = Flask(__name__)
 
-FIREBASE_WEB_API_KEY = "AIzaSyCEJKHbCFEfVE8XMV8Rd_tTLhHTEr1QpAI"
+FIREBASE_WEB_API_KEY = "YOUR_FIREBASE_WEB_API_KEY"
 rest_api_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_WEB_API_KEY}"
 
 config = {
-        "apiKey": "AIzaSyCEJKHbCFEfVE8XMV8Rd_tTLhHTEr1QpAI",
-        "authDomain": "vigilant-73f45.firebaseapp.com",
-        "databaseURL": "https://vigilant-73f45-default-rtdb.firebaseio.com",
-        "projectId": "vigilant-73f45",
-        "storageBucket": "vigilant-73f45.appspot.com",
-        "messagingSenderId": "71056574999",
-        "appId": "1:71056574999:web:c35fb0b1d641e3ec632a52"}
+        "apiKey": "YOUR_API_KEY",
+        "authDomain": "YOUR_AUTH_DOMAIN",
+        "databaseURL": "YOUR_DATABASE_URL",
+        "projectId": "YOUR_PROJECT_ID",
+        "storageBucket": "YOUR_STORAGE_BUCKET",
+        "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
+        "appId": "YOUR_APP_ID"}
 
 firebase_admin.initialize_app(cred, config)
 db = firestore.client()

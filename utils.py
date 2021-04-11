@@ -5,8 +5,8 @@ from twilio.rest import Client
 class Util:
     def __init__(self):
         self.g = geocoder.ip('me')
-        self.account_sid = 'ACeec1a4fa24498b488d9a387eb775e054'
-        self.auth_token = '691886f4c9202a2623cb738ad8ba91d2'
+        self.account_sid = 'YOUR_TWILIO_ACCOUNT_SID'
+        self.auth_token = 'YOUR_TWILIO_AUTH_TOKEN'
 
     def get_lat_long(self):
         return self.g.latlng
@@ -30,7 +30,7 @@ class Util:
         message = client.messages \
             .create(
                 body=f'http://maps.google.com/maps?q={ltlng[0]},{ltlng[1]}',
-                from_='+13236132697',
+                from_='YOUR_TWILIO_NO',
                 to=sendNo
             ) 
         return message.status
