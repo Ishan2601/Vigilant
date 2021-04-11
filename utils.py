@@ -34,23 +34,3 @@ class Util:
                 to=sendNo
             ) 
         return message.status
-
-    def send_verify_link(self,to):
-        if not to.startswith('+91'):
-            to = '+91' + to
-        verification = ( self.client.verify 
-                        .services(self.service_sid) 
-                        .verifications 
-                        .create(to=to, channel='sms')
-        )
-
-    def check_verification_status(self,to,otp):
-        if not to.startswith('+91'):
-            to = '+91' + to
-        verification_check = ( self.client.verify 
-                           .services(self.service_sid) 
-                           .verification_checks 
-                           .create(to=to, code=otp)
-        )
-        #print(verification_check.status)
-        return "approved" in verification_check.status

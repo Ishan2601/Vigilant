@@ -2,3 +2,8 @@ numpy
 opencv
 dlib
 imutils
+firebase_admin
+firebase
+flask
+twilio
+geocoder

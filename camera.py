@@ -1,7 +1,3 @@
-from imutils import face_utils
-import numpy as np
-import imutils
-import dlib
 import cv2
 
 class VideoCamera(object):

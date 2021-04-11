@@ -93,8 +93,8 @@ def ride_end():
         global sleep_count
         global yawn_count
         global ride_id
-        #print(f'Sleep Count: {sleep_count}')
-        #print(f'Yawn Count: {yawn_count}')
+        print(f'Sleep Count: {sleep_count}')
+        print(f'Yawn Count: {yawn_count}')
         ltlng = u.get_lat_long()
         data = {}
         data['Ride Start Time'] = start_time
@@ -107,13 +107,13 @@ def ride_end():
         doc = db.collection(u'Drivers').document(f'{user.uid}').collection('Rides').document()
         doc.set(data)
         ride_id = doc.id
+        sleep_count = 0
+        yawn_count = 0
         return render_template('ride.html')
 
 @app.route('/result', methods=['GET', 'POST'])
 def show_result():
     global db
-    global sleep_count
-    global yawn_count
     if request.method == 'POST':
         global user
         global ride_id
@@ -123,8 +123,10 @@ def show_result():
         ride_details = ride_doc.get().to_dict()
         #print(f'Sleep Count: {sleep_count}')
         #print(f'Yawn Count: {yawn_count}')
-        if sleep_count >= 5:
+        if ride_details['No. of sleeps'] >= 5:
             sms = u.send_SMS(details['Emergency Contact No.'])
+        else:
+            sms = 'SMS not sent as the driver is not drowsy'
 
         return render_template('result.html', result = details, got_result=True, sms_status = sms, ride_result = ride_details)
 
@@ -140,10 +142,10 @@ def gen(camera):
         d.check_drowsy(image)
         if d.eye_count >= d.eye_consec_frames:
             sleep_count += 1
-            #print('Slept')
+            print('Slept')
         if d.mouth_count >= d.mouth_consec_frames:
             yawn_count += 1
-            #print('Yawned')
+            print('Yawned')
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
