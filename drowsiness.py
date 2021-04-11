@@ -139,4 +139,4 @@ class Drowsy(object):
             self.mouth_count = 0
             self.yawn_alarm = False
             #self.fbApp.put('/vigilant-73f45-default-rtdb/Driver/-MXvinFMl_9RrzJgY70w', 'Yawning', 'No')
-        return self.sleep_alarm, self.yawn_alarm
+        #return self.eye_count, self.mouth_count
