@@ -3,7 +3,7 @@
 <h4 align = "center" >Problem Statement code and domain- C2P4, Image processing</h4>
 
 <h5> Project Description </h5>
-<p>Driver fatigue results from one or several factors: physical tiredness, long working hours, or sleep deprivation. Fatigue can easily set in during long journeys, particularly when drivers take inadequate rest periods or pauses to help break up the monotony. Most of the fatal crashes are associated with the driver’s drowsiness and fatigue.Thus there arises a need of a system that can detect drowsiness by monitoring the driver and thereby preventing fatal accidents. Automatic drowsy driver monitoring system is based on monitoring the changes in the eye blink duration. Our proposed method detects visual changes in eye locations using features of the eyes</p>
+<p>Driver fatigue results from one or several factors: physical tiredness, long working hours, or sleep deprivation. Fatigue can easily set in during long journeys, particularly when drivers take inadequate rest periods or pauses to help break up the monotony. Most of the fatal crashes are associated with the driver’s drowsiness and fatigue.Thus there arises a need of a system that can detect drowsiness by monitoring the driver and thereby preventing fatal accidents. Automatic drowsy driver monitoring system is based on monitoring the changes in the eye blink duration. Our proposed method detects visual changes in eye locations using features of the eyes and mouth locations using features of mouth</p>
 
 <h5>Steps to use</h5>
 <ul>
